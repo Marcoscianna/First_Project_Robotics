@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <os_cloud_node/points.h> // Include l'header del messaggio personalizzato
+#include <sensor_msgs/LaserScan.h> 
 #include <dynamic_reconfigure/server.h>
 #include <first_project/LidarFrameConfig.h>
 
@@ -11,17 +11,14 @@ public:
         nh.param<std::string>("default_frame", frame_id_, "world");
         lidar_frame_ = frame_id_;
 
-        lidar_sub_ = nh.subscribe("/os_cloud_node/points", 1, &LidarVisualizationNode::lidarCallback, this);
+        lidar_sub_ = nh.subscribe("/scan", 1, &LidarVisualizationNode::lidarCallback, this);
         dynamic_reconfigure_server_.setCallback(boost::bind(&LidarVisualizationNode::dynamicReconfigureCallback, this, _1, _2));
-
-        ros::spin();
     }
 
 private:
-    void lidarCallback(const os_cloud_node::pointsConstPtr& msg) { // Utilizzo del tipo di messaggio personalizzato
-        os_cloud_node::points lidar_msg = *msg;
+    void lidarCallback(const sensor_msgs::LaserScan::ConstPtr& msg) { 
+        sensor_msgs::LaserScan lidar_msg = *msg; 
         lidar_msg.header.frame_id = lidar_frame_;
-        // Here you can process the lidar data or publish it with the updated frame_id
     }
 
     void dynamicReconfigureCallback(first_project::LidarFrameConfig& config, uint32_t level) {
@@ -37,5 +34,6 @@ private:
 int main(int argc, char** argv) {
     ros::init(argc, argv, "lidar_visualization_node");
     LidarVisualizationNode node;
+    ros::spin(); 
     return 0;
 }

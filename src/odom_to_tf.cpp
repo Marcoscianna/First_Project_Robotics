@@ -9,7 +9,7 @@ public:
 
         // Retrieve node parameters
         nh.param<std::string>("root_frame", root_frame_, "world");
-        nh.param<std::string>("child_frame", child_frame_, "odom_frame");
+        nh.param<std::string>("child_frame", child_frame_, "world");
 
         // Subscribe to the input odometry topic
         odom_sub_ = nh.subscribe("input_odom", 1, &OdomToTFNode::odomCallback, this);
