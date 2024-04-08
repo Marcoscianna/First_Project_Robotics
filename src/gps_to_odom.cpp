@@ -74,7 +74,7 @@ void Callback(const nav_msgs::Odometry::ConstPtr& msg) {
 
    // Pubblica il messaggio di odometria elaborato sul topic input_odom
    ros::NodeHandle n;
-   ros::Publisher pub = n.advertise<nav_msgs::Odometry>("/input_odom", 1);
+   ros::Publisher pub = n.advertise<nav_msgs::Odometry>("/gps_odom", 1);
    pub.publish(output_msg);
 }
 
@@ -91,7 +91,7 @@ int main(int argc, char **argv){
 
 
    // Crea un subscriber che ascolta i messaggi dal topic "/gps_odom"
-   ros::Subscriber sub = n.subscribe("/gps_odom", 1, Callback);
+   ros::Subscriber sub = n.subscribe("/fix", 1, Callback);
 
 
    ros::spin(); // Mantieni il nodo in esecuzione finché non viene terminato esternamente
