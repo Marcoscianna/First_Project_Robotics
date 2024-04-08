@@ -1,64 +1,44 @@
 #include <ros/ros.h>
-#include <tf/transform_listener.h>
-#include <geometry_msgs/TransformStamped.h>
-//#include <nav_msgs/Odometry.h>
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
 
+class OdomToTFNode {
+public:
+    OdomToTFNode() {
+        ros::NodeHandle nh("~");
 
+        // Retrieve node parameters
+        nh.param<std::string>("root_frame", root_frame_, "world");
+        nh.param<std::string>("child_frame", child_frame_, "odom_frame");
 
+        // Subscribe to the input odometry topic
+        odom_sub_ = nh.subscribe("input_odom", 1, &OdomToTFNode::odomCallback, this);
+    }
 
-int main(int argc, char** argv){
-   // Initialize the ROS node
-   ros::init(argc, argv, "odom_to_tf");
+    void odomCallback(const nav_msgs::Odometry::ConstPtr& msg) {
+        // Convert odometry message to tf message
+        geometry_msgs::TransformStamped transformStamped;
+        transformStamped.header = msg->header;
+        transformStamped.child_frame_id = child_frame_;
+        transformStamped.transform.translation.x = msg->pose.pose.position.x;
+        transformStamped.transform.translation.y = msg->pose.pose.position.y;
+        transformStamped.transform.translation.z = msg->pose.pose.position.z;
+        transformStamped.transform.rotation = msg->pose.pose.orientation;
 
+        // Publish the transform
+        tf_broadcaster_.sendTransform(transformStamped);
+    }
 
-   // Create a ROS node handle
-   ros::NodeHandle node;
+private:
+    ros::Subscriber odom_sub_;
+    tf::TransformBroadcaster tf_broadcaster_;
+    std::string root_frame_;
+    std::string child_frame_;
+};
 
-
-   // Create a TransformListener object that will listen to tf data
-   tf::TransformListener listener;
-
-
-   // Set the rate at which we want to check the transformation
-   ros::Rate rate(10.0);
-
-
-   while (node.ok()){
-       tf::StampedTransform transform;
-
-
-       try{
-           // Wait for up to 1 second for the transform to become available
-           listener.waitForTransform("/input_odom", "/root_frame", ros::Time(0), ros::Duration(1.0));
-
-
-           // Look up the transformation from "world" to "FRleg"
-           listener.lookupTransform("/input_odom", "/root_frame", ros::Time(0), transform);
-           listener.lookupTransform("/input_odom", "/child_frame", ros::Time(0), transform);
-
-
-       }
-       catch (tf::TransformException &ex) {
-           // If there is an exception print the error message
-           ROS_ERROR("%s",ex.what());
-           ros::Duration(1.0).sleep();
-           continue;
-       }
-
-
-
-
-       // Print transformation (only pose, but you can get the orientation)
-       ROS_INFO("Translation: x=%f, y=%f, z=%f",
-                transform.getOrigin().x(),
-                transform.getOrigin().y(),
-                transform.getOrigin().z());
-
-
-       // Sleep
-       rate.sleep();
-   }
-
-
-   return 0;
+int main(int argc, char** argv) {
+    ros::init(argc, argv, "odom_to_tf_node");
+    OdomToTFNode node;
+    ros::spin();
+    return 0;
 }

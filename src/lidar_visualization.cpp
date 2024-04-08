@@ -1,35 +1,41 @@
-#include "ros/ros.h"
-#include "sensor_msgs/LaserScan.h"
-#include "first_project/LidarVisualizationConfig.h" // Modifica questa riga
+#include <ros/ros.h>
+#include <os_cloud_node/points.h> // Include l'header del messaggio personalizzato
+#include <dynamic_reconfigure/server.h>
+#include <first_project/LidarFrameConfig.h>
 
-std::string lidar_frame = "wheel_odom"; // Frame predefinito
+class LidarVisualizationNode {
+public:
+    LidarVisualizationNode() {
+        ros::NodeHandle nh("~");
 
-void reconfigureCallback(first_project::LidarVisualizationConfig &config, uint32_t level) {
-    lidar_frame = config.lidar_frame;
-}
+        nh.param<std::string>("default_frame", frame_id_, "world");
+        lidar_frame_ = frame_id_;
 
-void scanCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
-    // Modifica il frame nel messaggio del LIDAR
-    sensor_msgs::LaserScan modified_msg = *msg;
-    modified_msg.header.frame_id = lidar_frame;
+        lidar_sub_ = nh.subscribe("/os_cloud_node/points", 1, &LidarVisualizationNode::lidarCallback, this);
+        dynamic_reconfigure_server_.setCallback(boost::bind(&LidarVisualizationNode::dynamicReconfigureCallback, this, _1, _2));
 
-    // Fai qualcosa con il messaggio modificato...
-}
+        ros::spin();
+    }
+
+private:
+    void lidarCallback(const os_cloud_node::pointsConstPtr& msg) { // Utilizzo del tipo di messaggio personalizzato
+        os_cloud_node::points lidar_msg = *msg;
+        lidar_msg.header.frame_id = lidar_frame_;
+        // Here you can process the lidar data or publish it with the updated frame_id
+    }
+
+    void dynamicReconfigureCallback(first_project::LidarFrameConfig& config, uint32_t level) {
+        lidar_frame_ = config.lidar_frame;
+    }
+
+    ros::Subscriber lidar_sub_;
+    dynamic_reconfigure::Server<first_project::LidarFrameConfig> dynamic_reconfigure_server_;
+    std::string frame_id_;
+    std::string lidar_frame_;
+};
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "lidar_visualization");
-    ros::NodeHandle nh;
-
-    // Setup del server di configurazione dinamica
-    dynamic_reconfigure::Server<first_project::LidarVisualizationConfig> server;
-    dynamic_reconfigure::Server<first_project::LidarVisualizationConfig>::CallbackType f;
-    f = boost::bind(&reconfigureCallback, _1, _2);
-    server.setCallback(f);
-
-    // Sottoscrizione al topic del LIDAR
-    ros::Subscriber sub = nh.subscribe("/scan", 1, scanCallback);
-
-    ros::spin();
-
+    ros::init(argc, argv, "lidar_visualization_node");
+    LidarVisualizationNode node;
     return 0;
 }
