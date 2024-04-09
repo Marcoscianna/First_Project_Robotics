@@ -22,8 +22,8 @@ target_link_libraries(gps_to_odom ${catkin_LIBRARIES})
 add_executable(odom_to_tf src/odom_to_tf.cpp)
 target_link_libraries(odom_to_tf ${catkin_LIBRARIES})
 
-add_executable(lidar_visualization src/lidar_visualization.cpp)
-target_link_libraries(lidar_visualization ${catkin_LIBRARIES})
+##add_executable(lidar_visualization src/lidar_visualization.cpp)
+##target_link_libraries(lidar_visualization ${catkin_LIBRARIES})
 
 ## Aggiungi l'esecuzione di rviz
 install(PROGRAMS

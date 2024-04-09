@@ -1,7 +1,7 @@
 <launch>
-    <param name="lat_zero" value="0.0"/>
-    <param name="lon_zero" value="0.0"/>
-    <param name="alt_zero" value="0.0"/>
+    <param name="lat_zero" value="45.477721"/>
+    <param name="lon_zero" value="9.226796"/>
+    <param name="alt_zero" value="169.074000"/>
 
     <node pkg="rviz" name="rviz" type="rviz" args="-d $(find first_project)/rviz_config.rviz"/>
 
