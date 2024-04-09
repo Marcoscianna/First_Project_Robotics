@@ -6,15 +6,10 @@
 
 class OdomToTFNode {
 public:
-    OdomToTFNode() {
-        ros::NodeHandle nh;
-        ros::NodeHandle private_nh("~");
-
+    OdomToTFNode(ros::NodeHandle& nh) {
         // Retrieve node parameters
-        //string root_frame;
-        //string child_frame;
         nh.param<std::string>("root_frame", root_frame, "world");
-        nh.param<std::string>("child_frame", child_frame, "wheel_odom");
+        nh.param<std::string>("child_frame", child_frame, "default");
 
         ROS_INFO("Root frame: %s, Child frame: %s", root_frame.c_str(), child_frame.c_str());
 
@@ -24,8 +19,6 @@ public:
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& msg) {
         // Convert odometry message to tf message
-        //ROS_INFO("Messaggio ricevuto: %s", msg->header.frame_id.c_str());
-
         geometry_msgs::TransformStamped transformStamped;
 
         transformStamped.header.stamp = ros::Time::now();
@@ -55,7 +48,13 @@ private:
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "odom_to_tf_node");
-    OdomToTFNode node;
+
+    ros::NodeHandle nh;
+    OdomToTFNode odom_to_tf_encoder(nh);
+
+    ros::NodeHandle nh_gps("~");
+    OdomToTFNode odom_to_tf_gps(nh_gps);
+
     ros::spin();
     return 0;
 }
