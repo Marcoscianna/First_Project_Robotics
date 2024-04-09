@@ -66,7 +66,7 @@ int main(int argc, char **argv){
     n.param("lon_zero", lon_zero, 0.0);
     n.param("alt_zero", alt_zero, 0.0);
     // Crea un subscriber che ascolta i messaggi dal topic "/fix"
-    ros::Subscriber sub = n.subscribe("/fix", 1, callback);
+    ros::Subscriber sub = n.subscribe("/fix", 1000, callback);
     ros::spin(); // Mantieni il nodo in esecuzione finché non viene terminato esternamente
     return 0;
 }

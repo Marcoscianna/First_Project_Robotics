@@ -14,16 +14,16 @@ public:
         ROS_INFO("Root frame: %s, Child frame: %s", root_frame.c_str(), child_frame.c_str());
 
         // Subscribe to the input odometry topic
-        odom_sub_ = nh.subscribe("input_odom", 1, &OdomToTFNode::odomCallback, this);
+        odom_sub_ = nh.subscribe("/input_odom", 1000, &OdomToTFNode::odomCallback, this);
     }
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& msg) {
         // Convert odometry message to tf message
         geometry_msgs::TransformStamped transformStamped;
-
         transformStamped.header.stamp = ros::Time::now();
         transformStamped.header = msg->header;
         transformStamped.child_frame_id = child_frame;
+        transformStamped.header.frame_id = root_frame;
         transformStamped.transform.translation.x = msg->pose.pose.position.x;
         transformStamped.transform.translation.y = msg->pose.pose.position.y;
         transformStamped.transform.translation.z = msg->pose.pose.position.z;
@@ -37,6 +37,12 @@ public:
 
         // Publish the transform
         tf_broadcaster_.sendTransform(transformStamped);
+        
+            ROS_INFO("Translation: x=%f, y=%f, z=%f",
+              transformStamped.transform.translation.x,
+              transformStamped.transform.translation.y,
+              transformStamped.transform.translation.z);
+
     }
 
 private:
@@ -48,12 +54,9 @@ private:
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "odom_to_tf_node");
-
-    ros::NodeHandle nh;
-    OdomToTFNode odom_to_tf_encoder(nh);
-
-    ros::NodeHandle nh_gps("~");
-    OdomToTFNode odom_to_tf_gps(nh_gps);
+        
+    ros::NodeHandle nh("~");
+    OdomToTFNode odom_to_tf_gps(nh);
 
     ros::spin();
     return 0;
