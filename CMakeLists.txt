@@ -5,12 +5,16 @@ project(first_project)
 find_package(catkin REQUIRED COMPONENTS
    roscpp nav_msgs tf
    roscpp
-   std_msgs)
+   std_msgs
+   dynamic_reconfigure)
+
+generate_dynamic_reconfigure_options(
+    cfg/parameters.cfg
+  )
 
 ## Specifica i pacchetti di cui il tuo pacchetto dipende direttamente
 catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs
-)
+  CATKIN_DEPENDS roscpp std_msgs )
 
 ## Specifica gli include e i link directories
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -21,6 +25,10 @@ target_link_libraries(gps_to_odom ${catkin_LIBRARIES})
 
 add_executable(odom_to_tf src/odom_to_tf.cpp)
 target_link_libraries(odom_to_tf ${catkin_LIBRARIES})
+
+add_executable(lidar_visualization src/lidar_visualization.cpp)
+add_dependencies(lidar_visualization ${PROJECT_NAME}_gencfg)
+target_link_libraries(lidar_visualization ${catkin_LIBRARIES})
 
 ##add_executable(lidar_visualization src/lidar_visualization.cpp)
 ##target_link_libraries(lidar_visualization ${catkin_LIBRARIES})
