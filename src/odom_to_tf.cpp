@@ -11,7 +11,7 @@ public:
         nh.param<std::string>("root_frame", root_frame, "world");
         nh.param<std::string>("child_frame", child_frame, "default");
 
-        ROS_INFO("Root frame: %s, Child frame: %s", root_frame.c_str(), child_frame.c_str());
+        //ROS_INFO("Root frame: %s, Child frame: %s", root_frame.c_str(), child_frame.c_str());
 
         // Subscribe to the input odometry topic
         odom_sub_ = nh.subscribe("/input_odom", 1000, &OdomToTFNode::odomCallback, this);
@@ -38,10 +38,10 @@ public:
         // Publish the transform
         tf_broadcaster_.sendTransform(transformStamped);
         
-            ROS_INFO("Translation: x=%f, y=%f, z=%f",
-              transformStamped.transform.translation.x,
-              transformStamped.transform.translation.y,
-              transformStamped.transform.translation.z);
+            //ROS_INFO("Translation: x=%f, y=%f, z=%f",
+              //transformStamped.transform.translation.x,
+              //transformStamped.transform.translation.y,
+              //transformStamped.transform.translation.z);
 
     }
 

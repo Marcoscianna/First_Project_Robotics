@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <sensor_msgs/LaserScan.h> 
+#include <sensor_msgs/LaserScan.h>
 #include <dynamic_reconfigure/server.h>
 #include <first_project/parametersConfig.h>
 
@@ -10,20 +10,27 @@ private:
     ros::Subscriber sub_;
     std::string lidar_frame_;
 
-    void lidarCallback(const sensor_msgs::LaserScan::ConstPtr& msg) { 
-        sensor_msgs::LaserScan lidar_msg = *msg; 
-        lidar_msg.header.frame_id = lidar_frame_;
+    // Callback per il messaggio LaserScan
+    void laserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+        // Qui puoi gestire i dati del messaggio LaserScan
+        // Ad esempio, puoi modificare il frame_id e pubblicare il messaggio modificato
+        sensor_msgs::LaserScan modified_scan = *msg;
+        modified_scan.header.frame_id = lidar_frame_;
+        // Qui puoi pubblicare il messaggio modificato o eseguire altre operazioni necessarie
     }
 
+    // Callback per la riconfigurazione dinamica
     void callback(first_project::parametersConfig &config, uint32_t level) {
-        ROS_INFO("Reconfigure Request: gps_odom=%s, wheel_odom=%s", 
-                config.gps_odom ? "true" : "false", 
-                config.wheel_odom ? "true" : "false");         
+        ROS_INFO("Reconfigure Request: %s %s", 
+                config.gps_odom.c_str(), 
+                config.wheel_odom.c_str());         
+        ROS_INFO ("%d",level);
 
-        // Modifica del frame_id dell'intestazione in base al valore dei parametri
-        if (config.gps_odom) {
+        if (!config.gps_odom.empty() && !config.wheel_odom.empty()) {
+            ROS_WARN("Entrambi i frame sono selezionati. Seleziona solo uno.");
+        } else if (!config.gps_odom.empty()) {
             lidar_frame_ = "gps_odom";
-        } else if (config.wheel_odom) {
+        } else if (!config.wheel_odom.empty()) {
             lidar_frame_ = "wheel_odom";
         } else {
             ROS_WARN("Nessun frame selezionato.");
@@ -46,8 +53,8 @@ public:
         f = boost::bind(&LidarVisualizationNode::callback, this, _1, _2);
         server.setCallback(f);
 
-        // Sottoscrizione al topic "/scan"
-        sub_ = nh_.subscribe("/scan", 1000, &LidarVisualizationNode::lidarCallback, this);
+        // Sottoscrizione al topic "/os_cloud_node/points"
+        sub_ = nh_.subscribe("/os_cloud_node/points",1000, &LidarVisualizationNode::laserScanCallback, this);
 
         ROS_INFO("Nodo avviato");
         ros::spin();

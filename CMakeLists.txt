@@ -14,7 +14,7 @@ generate_dynamic_reconfigure_options(
 
 ## Specifica i pacchetti di cui il tuo pacchetto dipende direttamente
 catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs )
+  CATKIN_DEPENDS roscpp std_msgs)
 
 ## Specifica gli include e i link directories
 include_directories(include ${catkin_INCLUDE_DIRS})
