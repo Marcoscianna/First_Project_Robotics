@@ -1,11 +1,11 @@
 <launch>
-    <param name="lat_zero" value="45.477721"/>
-    <param name="lon_zero" value="9.226796"/>
-    <param name="alt_zero" value="169.074000"/>
+    <param name="lat_zero" value="45.477669"/>    
+    <param name="lon_zero" value="9.226740"/>
+    <param name="alt_zero" value="169.039000"/>
 
     <node name="rviz" pkg="rviz" type="rviz" args="rviz rviz" />
 
-    <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure" args="rqt_reconfigure lidar_visualization" />
+    <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure" args="lidar_remap lidar_remap" />
 
     <node pkg="first_project" name="gps_to_odom" type="gps_to_odom" output="screen"/>
 
@@ -23,5 +23,5 @@
         <remap from="/input_odom" to="/gps_odom"/>        <!-- rimappo l'input -->
     </node>
 
-    <node pkg="first_project" name="lidar_visualization" type="lidar_visualization" output="screen"/>
+    <node pkg="first_project" name="lidar_remap" type="lidar_remap" output="screen"/>
 </launch>

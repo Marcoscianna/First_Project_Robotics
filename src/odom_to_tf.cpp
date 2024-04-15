@@ -12,31 +12,26 @@ private:
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& msg) {
         // Calcola la trasformazione e pubblicala utilizzando il broadcaster tf
-        geometry_msgs::TransformStamped transformStamped;
-        transformStamped.header.stamp = ros::Time::now();
-        transformStamped.header.frame_id = root_frame_;
-        transformStamped.child_frame_id = child_frame_;
-        transformStamped.transform.translation.x = msg->pose.pose.position.x;
-        transformStamped.transform.translation.y = msg->pose.pose.position.y;
-        transformStamped.transform.translation.z = msg->pose.pose.position.z;
-        transformStamped.transform.rotation = msg->pose.pose.orientation;
+        tf::Transform transform;
+        transform.setOrigin(tf::Vector3(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z));
+    
+        tf::Quaternion quaternion;
+        tf::quaternionMsgToTF(msg->pose.pose.orientation, quaternion); // Utilizza quaternionMsgToTF per ottenere il quaternione dal messaggio di odometria
+        transform.setRotation(quaternion);
 
-        tf2::Quaternion quaternion;
-        quaternion.setRPY(0, 0, msg->pose.pose.orientation.z);
-        transformStamped.transform.rotation.x = quaternion.x();
-        transformStamped.transform.rotation.y = quaternion.y();
-        transformStamped.transform.rotation.z = quaternion.z();
-        transformStamped.transform.rotation.w = quaternion.w();
+        // Pubblica la trasformazione tf
+        tf_broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), root_frame_, child_frame_));
+}
 
-        tf_broadcaster_.sendTransform(transformStamped);
-    }
 
 public:
     OdomToTFNode() {
         nh_ = ros::NodeHandle("~");
         nh_.getParam("root_frame", root_frame_);
         nh_.getParam("child_frame", child_frame_);
-        sub_ = nh_.subscribe("/odom", 1000, &OdomToTFNode::odomCallback, this);
+        sub_ = nh_.subscribe("/input_odom", 1000, &OdomToTFNode::odomCallback, this);
+        ROS_INFO ("root: %s child: %s ",root_frame_.c_str(),child_frame_.c_str());
+
     }
 
     void run() {

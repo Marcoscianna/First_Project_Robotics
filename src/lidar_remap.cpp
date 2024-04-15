@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/PointCloud2.h> // Cambiato da sensor_msgs/PointCloud
 #include <dynamic_reconfigure/server.h>
 #include <first_project/parametersConfig.h>
 
@@ -12,7 +12,7 @@ private:
     std::string lidar_frame_;
 
     // Callback per il messaggio PointCloud2
-    void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
+    void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) { // Cambiato da PointCloud
         // Qui puoi convertire i dati della nuvola di punti in dati di scansione laser
 
         // Supponiamo che tu voglia convertire la distanza media dei punti in una scansione laser
@@ -38,6 +38,8 @@ private:
 
         // Imposta il frame ID
         laser_scan.header.frame_id = lidar_frame_;
+        ROS_INFO("header %s",laser_scan.header.frame_id.c_str());
+        ROS_INFO("Ricevuto lidar %f %f %f ",laser_scan.angle_min,laser_scan.angle_max,laser_scan.angle_increment);
 
         // Pubblica il messaggio di scansione laser
         pub_.publish(laser_scan);
@@ -48,7 +50,7 @@ private:
         ROS_INFO("Reconfigure Request: %s %s", 
                 config.gps_odom.c_str(), 
                 config.wheel_odom.c_str());         
-        ROS_INFO ("%d",level);
+        ROS_INFO("%d", level);
 
         if (!config.gps_odom.empty() && !config.wheel_odom.empty()) {
             ROS_WARN("Entrambi i frame sono selezionati. Seleziona solo uno.");
@@ -82,7 +84,6 @@ public:
 
         // Sottoscrizione al topic "/os_cloud_node/points"
         sub_ = nh_.subscribe("/os_cloud_node/points", 1000, &LidarVisualizationNode::pointCloudCallback, this);
-
         ros::spin();
     }
 };
