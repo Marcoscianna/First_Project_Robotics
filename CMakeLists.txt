@@ -41,3 +41,7 @@ install(PROGRAMS
   scripts/run_rviz
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+install(PROGRAMS
+  scripts/rqt_reconfigure
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

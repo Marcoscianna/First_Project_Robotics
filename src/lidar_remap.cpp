@@ -38,8 +38,8 @@ private:
 
         // Imposta il frame ID
         laser_scan.header.frame_id = lidar_frame_;
-        ROS_INFO("header %s",laser_scan.header.frame_id.c_str());
-        ROS_INFO("Ricevuto lidar %f %f %f ",laser_scan.angle_min,laser_scan.angle_max,laser_scan.angle_increment);
+        //ROS_INFO("header %s",laser_scan.header.frame_id.c_str());
+        //ROS_INFO("Ricevuto lidar %f %f %f ",laser_scan.angle_min,laser_scan.angle_max,laser_scan.angle_increment);
 
         // Pubblica il messaggio di scansione laser
         pub_.publish(laser_scan);

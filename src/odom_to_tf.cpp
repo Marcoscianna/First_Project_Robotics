@@ -18,7 +18,7 @@ private:
         tf::Quaternion quaternion;
         tf::quaternionMsgToTF(msg->pose.pose.orientation, quaternion); // Utilizza quaternionMsgToTF per ottenere il quaternione dal messaggio di odometria
         transform.setRotation(quaternion);
-
+        ROS_INFO (" cooord %s %f %f %f ",child_frame_.c_str(),msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
         // Pubblica la trasformazione tf
         tf_broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), root_frame_, child_frame_));
 }
