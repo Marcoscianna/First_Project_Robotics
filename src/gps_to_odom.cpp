@@ -60,12 +60,17 @@ void callback(const sensor_msgs::NavSatFix::ConstPtr& msg) {
     double latitude = msg->latitude;
     double longitude = msg->longitude;
     double altitude = msg->altitude;
-    //ROS_INFO (" GPS %f %f %f ",latitude,longitude,altitude);
+    ROS_INFO (" GPS %f %f %f ",latitude,longitude,altitude);
     // Calcola le coordinate ECEF della posizione GPS ricevuta
+
+    latitude=latitude*M_PI/180;
+    longitude=longitude*M_PI/180;
+
+    ROS_INFO (" GPS RADIUS %f %f %f ",latitude,longitude,altitude);
     double ecef_x, ecef_y, ecef_z;
     
     GpsToEcef(msg->latitude, msg->longitude, msg->altitude, ecef_x, ecef_y, ecef_z);
-    //ROS_INFO (" ECEF %f %f %f ",ecef_x,ecef_y,ecef_z);
+    ROS_INFO (" ECEF %f %f %f ",ecef_x,ecef_y,ecef_z);
 
 
     // Calcola le coordinate ENU rispetto al punto di riferimento
