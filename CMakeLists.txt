@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
    roscpp nav_msgs tf
    roscpp
    std_msgs
+   sensor_msgs
    dynamic_reconfigure)
 
 generate_dynamic_reconfigure_options(
@@ -17,7 +18,7 @@ generate_dynamic_reconfigure_options(
 
 ## Specifica i pacchetti di cui il tuo pacchetto dipende direttamente
 catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs)
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs)
 
 ## Specifica gli include e i link directories
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -32,9 +33,6 @@ target_link_libraries(odom_to_tf ${catkin_LIBRARIES})
 add_executable(lidar_remap src/lidar_remap.cpp)
 add_dependencies(lidar_remap ${PROJECT_NAME}_gencfg)
 target_link_libraries(lidar_remap ${catkin_LIBRARIES})
-
-##add_executable(lidar_visualization src/lidar_visualization.cpp)
-##target_link_libraries(lidar_visualization ${catkin_LIBRARIES})
 
 ## Aggiungi l'esecuzione di rviz
 install(PROGRAMS

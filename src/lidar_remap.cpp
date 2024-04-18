@@ -1,6 +1,5 @@
 #include <ros/ros.h>
-#include <sensor_msgs/LaserScan.h>
-#include <sensor_msgs/PointCloud2.h> // Cambiato da sensor_msgs/PointCloud
+#include <sensor_msgs/PointCloud2.h> 
 #include <dynamic_reconfigure/server.h>
 #include <first_project/parametersConfig.h>
 
@@ -10,40 +9,6 @@ private:
     ros::Subscriber sub_;
     ros::Publisher pub_;
     std::string lidar_frame_;
-
-    // Callback per il messaggio PointCloud2
-    void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) { // Cambiato da PointCloud
-        // Qui puoi convertire i dati della nuvola di punti in dati di scansione laser
-
-        // Supponiamo che tu voglia convertire la distanza media dei punti in una scansione laser
-        sensor_msgs::LaserScan laser_scan;
-        laser_scan.header = msg->header;
-        laser_scan.angle_min = -M_PI / 2;  // Angolo minimo
-        laser_scan.angle_max = M_PI / 2;   // Angolo massimo
-        laser_scan.angle_increment = M_PI / msg->width;  // Incremento dell'angolo
-        laser_scan.time_increment = 0.0;  // Incremento del tempo
-        laser_scan.scan_time = 0.1;  // Tempo di scansione
-        laser_scan.range_min = 0.0;  // Distanza minima rilevabile
-        laser_scan.range_max = 10.0;  // Distanza massima rilevabile
-
-        // Calcola la distanza media dei punti e assegnala alla scansione laser
-        std::vector<float> ranges;
-        for (size_t i = 0; i < msg->width; ++i) {
-            float range = sqrt(pow(msg->data[i * msg->point_step], 2) + 
-                               pow(msg->data[i * msg->point_step + 1], 2) + 
-                               pow(msg->data[i * msg->point_step + 2], 2));
-            ranges.push_back(range);
-        }
-        laser_scan.ranges = ranges;
-
-        // Imposta il frame ID
-        laser_scan.header.frame_id = lidar_frame_;
-        //ROS_INFO("header %s",laser_scan.header.frame_id.c_str());
-        //ROS_INFO("Ricevuto lidar %f %f %f ",laser_scan.angle_min,laser_scan.angle_max,laser_scan.angle_increment);
-
-        // Pubblica il messaggio di scansione laser
-        pub_.publish(laser_scan);
-    }
 
     // Callback per la riconfigurazione dinamica
     void callback(first_project::parametersConfig &config, uint32_t level) {
@@ -63,6 +28,18 @@ private:
         }
     }
 
+    // Callback per il messaggio della nuvola di punti
+    void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
+        // Creazione del messaggio di nuvola di punti da pubblicare
+        sensor_msgs::PointCloud2 laser_scan = *msg;
+
+        // Aggiornamento dell'header con il nuovo frame ID
+        laser_scan.header.frame_id = lidar_frame_;
+
+        // Pubblicazione del messaggio aggiornato
+        pub_.publish(laser_scan);
+    }
+
 public:
     LidarVisualizationNode() {
         nh_ = ros::NodeHandle("~");
@@ -71,7 +48,7 @@ public:
         lidar_frame_ = "default_frame"; 
 
         // Inizializzazione del publisher per pubblicare i dati del sensore laser modificati
-        pub_ = nh_.advertise<sensor_msgs::LaserScan>("/pointcloud_remapped", 1000);
+        pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/pointcloud_remapped", 1000);
     }
 
     void run() {
@@ -86,10 +63,10 @@ public:
         sub_ = nh_.subscribe("/os_cloud_node/points", 1000, &LidarVisualizationNode::pointCloudCallback, this);
         ros::spin();
     }
-};
+}; 
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "lidar_remap");
+    ros::init(argc, argv, "lidar_visualization_node");
 
     LidarVisualizationNode node;
     node.run();

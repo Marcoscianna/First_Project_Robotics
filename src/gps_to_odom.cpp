@@ -63,13 +63,13 @@ void callback(const sensor_msgs::NavSatFix::ConstPtr& msg) {
     ROS_INFO (" GPS %f %f %f ",latitude,longitude,altitude);
     // Calcola le coordinate ECEF della posizione GPS ricevuta
 
-    latitude=latitude*M_PI/180;
-    longitude=longitude*M_PI/180;
+    latitude=latitude  *M_PI/180;
+    longitude=longitude *M_PI/180;
 
-    ROS_INFO (" GPS RADIUS %f %f %f ",latitude,longitude,altitude);
+    //ROS_INFO (" GPS RADIUS %f %f %f ",latitude,longitude,altitude);
     double ecef_x, ecef_y, ecef_z;
     
-    GpsToEcef(msg->latitude, msg->longitude, msg->altitude, ecef_x, ecef_y, ecef_z);
+    GpsToEcef(latitude, longitude, altitude, ecef_x, ecef_y, ecef_z);
     ROS_INFO (" ECEF %f %f %f ",ecef_x,ecef_y,ecef_z);
 
 
@@ -114,6 +114,9 @@ int main(int argc, char **argv) {
     n.getParam("/lat_zero", lat_zero);
     n.getParam("/lon_zero", lon_zero);
     n.getParam("/alt_zero", alt_zero);
+
+    lat_zero=lat_zero*M_PI/180;
+    lon_zero=lon_zero*M_PI/180;
 
     GpsToEcef(lat_zero, lon_zero, alt_zero, Xr, Yr, Zr);
     //ROS_INFO (" GLOBALI %f %f %f ",Xr,Yr,Zr);

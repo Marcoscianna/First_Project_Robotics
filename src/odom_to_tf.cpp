@@ -18,7 +18,7 @@ private:
         tf::Quaternion quaternion;
         tf::quaternionMsgToTF(msg->pose.pose.orientation, quaternion); // Utilizza quaternionMsgToTF per ottenere il quaternione dal messaggio di odometria
         transform.setRotation(quaternion);
-        ROS_INFO (" coord %s %f %f %f ",child_frame_.c_str(),msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
+        //ROS_INFO (" coord %s %f %f %f ",child_frame_.c_str(),msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
         // Pubblica la trasformazione tf
         tf_broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), root_frame_, child_frame_));
 }
@@ -30,7 +30,7 @@ public:
         nh_.getParam("root_frame", root_frame_);
         nh_.getParam("child_frame", child_frame_);
         sub_ = nh_.subscribe("/input_odom", 1000, &OdomToTFNode::odomCallback, this);
-        ROS_INFO ("root: %s child: %s ",root_frame_.c_str(),child_frame_.c_str());
+        //ROS_INFO ("root: %s child: %s ",root_frame_.c_str(),child_frame_.c_str());
 
     }
 
