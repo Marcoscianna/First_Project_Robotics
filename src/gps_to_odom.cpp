@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     lat_zero=lat_zero*M_PI/180;
     lon_zero=lon_zero*M_PI/180;
     GpsToEcef(lat_zero, lon_zero, alt_zero, Xr, Yr, Zr);
-    ros::Subscriber sub = n.subscribe("/fix", 1000, callback);    
+    ros::Subscriber sub = n.subscribe("/fix", 1000, callback);
     pub = n.advertise<nav_msgs::Odometry>("/gps_odom", 1000);
     ros::spin(); 
     return 0;
