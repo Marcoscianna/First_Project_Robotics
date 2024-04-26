@@ -10,17 +10,16 @@ private:
     ros::Publisher pub_;
     std::string lidar_frame_;
 
-    void callback(first_project::parametersConfig &config, uint32_t level) {
-        ROS_INFO("Reconfigure Request: %s %s", config.gps_odom.c_str(), config.wheel_odom.c_str());         
+    void callback(first_project::parametersConfig &config, uint32_t level) {      
 
-        if (!config.gps_odom.empty() && !config.wheel_odom.empty()) {
-            ROS_WARN("Entrambi i frame sono selezionati. Seleziona solo uno.");
-        } else if (!config.gps_odom.empty()) {
+        if (config.wheel && config.gps) {
+            lidar_frame_ = "world";
+        } else if (config.gps) {
             lidar_frame_ = "gps_odom";
-        } else if (!config.wheel_odom.empty()) {
+        } else if (config.wheel) {
             lidar_frame_ = "wheel_odom";
         } else {
-            ROS_WARN("Nessun frame selezionato.");
+            lidar_frame_ = "world";
         }
     }
 
