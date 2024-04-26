@@ -24,7 +24,6 @@ void GpsToEcef(double lat, double lon, double alt, double& ecef_x, double& ecef_
     ecef_z = ((1 - e )* N + alt) * sin(lat);
 }
 
-// Funzione per convertire le coordinate ECEF in coordinate ENU
 void EcefToEnu(double ecef_x, double ecef_y, double ecef_z, double& enu_x, double& enu_y, double& enu_z) {
     double cos_lat = cos(lat_zero);
     double sin_lat = sin(lat_zero);
