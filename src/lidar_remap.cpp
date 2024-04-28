@@ -24,8 +24,9 @@ private:
     }
 
     void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
-        sensor_msgs::PointCloud2 laser_scan = *msg;
+        sensor_msgs::PointCloud2 laser_scan = *msg;     
         laser_scan.header.frame_id = lidar_frame_;
+        laser_scan.header.stamp = ros::Time::now();
         pub_.publish(laser_scan);
     }
 
