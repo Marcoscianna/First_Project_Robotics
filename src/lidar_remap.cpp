@@ -11,22 +11,13 @@ private:
     std::string lidar_frame_;
 
     void callback(first_project::parametersConfig &config, uint32_t level) {      
-
-        if (config.wheel && config.gps) {
-            lidar_frame_ = "world";
-        } else if (config.gps) {
-            lidar_frame_ = "gps_odom";
-        } else if (config.wheel) {
-            lidar_frame_ = "wheel_odom";
-        } else {
-            lidar_frame_ = "world";
-        }
+        lidar_frame_ = config.lidar_frame_;
     }
 
     void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
         sensor_msgs::PointCloud2 laser_scan = *msg;     
         laser_scan.header.frame_id = lidar_frame_;
-        laser_scan.header.stamp = ros::Time::now();
+        laser_scan.header.stamp = msg->header.stamp;
         pub_.publish(laser_scan);
     }
 

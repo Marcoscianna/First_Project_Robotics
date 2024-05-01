@@ -16,7 +16,7 @@ private:
         tf::Quaternion quaternion;
         quaternion.setRPY(0, 0, msg->pose.pose.orientation.w);
         transform.setRotation(quaternion);
-        tf_broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), root_frame_, child_frame_));
+        tf_broadcaster_.sendTransform(tf::StampedTransform(transform, msg->header.stamp, root_frame_, child_frame_));
 }
 
 

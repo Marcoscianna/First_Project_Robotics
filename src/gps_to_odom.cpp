@@ -32,9 +32,9 @@ void EcefToEnu(double ecef_x, double ecef_y, double ecef_z, double& enu_x, doubl
     double dx = ecef_x - Xr;
     double dy = ecef_y - Yr;
     double dz = ecef_z - Zr;
-    enu_x = (-sin_lon * dx) + (cos_lon * dy);
-    enu_y = (-sin_lat * cos_lon * dx) + (-sin_lat * sin_lon * dy) + (cos_lat * dz);
-    enu_z = (cos_lat * cos_lon * dx) + (cos_lat * sin_lon * dy) + (sin_lat * dz);
+    enu_x = (-sin_lon * dx) + (cos_lon * dy) ;
+    enu_y = (-sin_lat * cos_lon * dx) + (-sin_lat * sin_lon * dy) + (cos_lat * dz) ;
+    enu_z = (cos_lat * cos_lon * dx) + (cos_lat * sin_lon * dy) + (sin_lat * dz)  ;
 }
 
 double ComputeYaw(double x, double y) {
