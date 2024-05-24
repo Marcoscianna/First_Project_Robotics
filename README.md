@@ -7,8 +7,8 @@ The second project is an implementation of mapping and navigation in the mapped 
 
 The autors of the project are:
 
--Alessio Villa(https://github.com/alessiovilla) 
--Marco Scianna(https://github.com/Marcoscianna)
+-Alessio Villa (https://github.com/alessiovilla) 
+-Marco Scianna (https://github.com/Marcoscianna)
 
 
 
