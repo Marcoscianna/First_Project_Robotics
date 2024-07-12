@@ -6,7 +6,7 @@ The first project had to deals with the odometry, tf and lidar visualization of 
 
 The autors of the project are:
 
--Alessio Villa (https://github.com/alessiovilla) 
+-Alessio Villa (https://github.com/alessiovilla)  
 -Marco Scianna (https://github.com/Marcoscianna)
 
 
